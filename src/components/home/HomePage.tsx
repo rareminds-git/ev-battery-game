@@ -1,11 +1,11 @@
+import { BookOpen, FastForward, LogOut, Play, Settings } from 'lucide-react';
 import React from 'react';
-import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Play, FastForward, BookOpen, Settings, LogOut } from 'lucide-react';
-import MenuItem from './MenuItem';
-import GlowingTitle from '../ui/GlowingTitle';
+import { useAuth } from '../../context/AuthContext';
 import AnimatedLogo from '../ui/AnimatedLogo';
 import CircuitLines from '../ui/animations/CircuitLines';
+import GlowingTitle from '../ui/GlowingTitle';
+import MenuItem from './MenuItem';
 
 const HomePage: React.FC = () => {
   const { logout } = useAuth();
@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden flex items-center">
       <CircuitLines />
       <div className="max-w-md mx-auto relative z-10">
         <div className="flex items-center gap-6 mb-12">
