@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { levels } from '../../../data/levels';
 import { Home } from "lucide-react";
-import { fetchAllLevels } from "../../../composables/fetchLevel";
+import { fetchAllLevels, fetchTopLevel } from "../../../composables/fetchLevel";
+import { useGameProgress } from "../../../context/GameProgressContext";
+import { auth } from "../../../firebaseConfig";
 import { Level } from "../../../types/game";
 import AnimatedTitle from "../../ui/AnimatedTitle";
 import CircuitLines from "../../ui/animations/CircuitLines";
@@ -11,14 +13,27 @@ import LevelCard from "./LevelCard";
 const LevelsPage: React.FC = () => {
   const navigate = useNavigate();
   const [levels, setLevels] = useState<Level[]>([]);
+  const [topLevel, setTopLevel] = useState(0);
+  const { completeLevel } = useGameProgress();
   useEffect(() => {
     const fetchLevels = async () => {
-      const allLevels:Level[] = await fetchAllLevels();
+      const allLevels: Level[] = await fetchAllLevels();
       setLevels(allLevels);
     };
     fetchLevels();
     // console.log(levels)
   }, []);
+  useEffect(() => {
+    if (auth.currentUser) {
+      fetchTopLevel(auth.currentUser?.uid)
+        .then((topLevel) => {
+          // console.log(topLevel);
+          setTopLevel(topLevel);
+          for (let i = 1; i <= topLevel; i++) completeLevel(i);
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [auth.currentUser]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">

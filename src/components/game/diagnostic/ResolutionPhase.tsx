@@ -35,7 +35,7 @@ const ResolutionPhase: React.FC<ResolutionPhaseProps> = ({
             <motion.button
               key={option.id}
               onClick={() => !showResult && onSelectOption(option.id)}
-              disabled={showResult}
+              disabled={enabled}
               whileHover={!showResult ? { scale: 1.02 } : {}}
               whileTap={!showResult ? { scale: 0.98 } : {}}
               className={`p-4 rounded-lg border transition-all duration-300 ${

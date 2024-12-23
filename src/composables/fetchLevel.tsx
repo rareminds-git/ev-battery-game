@@ -5,6 +5,7 @@ import {
   getDocs,
   orderBy,
   query,
+  where
 } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Ensure you have initialized Firebase and Firestore
 
@@ -44,4 +45,26 @@ const fetchLevelById = async (levelId: any) => {
   }
 };
 
-export { fetchAllLevels, fetchLevelById };
+const fetchTopLevel = async (userId: string) => {
+  try {
+    // Reference to the 'levels' subcollection under the user
+    const levelsRef = collection(db, "playerProgress", userId, "levels");
+
+    // Get all documents from the 'levels' subcollection
+    const completedQuery = query(levelsRef, where("completed", "==", true));
+
+    const querySnapshot = await getDocs(completedQuery);
+
+    // Extracting the IDs of each document (subdocument)
+    const maxLevelId = Math.max(
+      ...querySnapshot.docs.map((doc) => Number(doc.id)).filter((id) => !isNaN(id))
+    );
+
+    return maxLevelId;
+  } catch (error) {
+    console.error("Error fetching level IDs:", error);
+    throw error;
+  }
+};
+
+export { fetchAllLevels, fetchLevelById, fetchTopLevel };

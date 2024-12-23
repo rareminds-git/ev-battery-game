@@ -35,3 +35,15 @@ export interface DiagnosticScenario {
     options: ResolutionOption[];
   };
 }
+
+// export interface LevelsData {
+//   id: number;
+//   revealedQuestionsIds: string[];
+//   attemptedAnswersIds: string[];
+// }
+
+// export interface SaveData {
+//   currentLevel: LevelsData;
+//   score: number;
+//   completed: LevelsData[];
+// }

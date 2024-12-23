@@ -2,8 +2,13 @@ import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchLevelById } from "../../composables/fetchLevel";
+import {
+  fetchGameProgress,
+  saveGameProgress,
+} from "../../composables/gameProgress";
 import { useGameProgress } from "../../context/GameProgressContext";
 import { scenarios } from "../../data/diagnosticScenarios";
+import { auth } from "../../firebaseConfig";
 import { DiagnosticQuestion, DiagnosticScenario } from "../../types/game";
 import TypewriterText from "../ui/TypewriterText";
 import GameIllustration from "./GameIllustration";
@@ -32,6 +37,18 @@ const GamePage: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
+  // useEffect(() => {
+  //   let playerProgress: SaveData = {
+  //     currentLevel: {
+  //       id: 1,
+  //       revealedQuestionsIds: [],
+  //       attemptedAnswersIds: [],
+  //     },
+  //     score: 0,
+  //     completed: [],
+  //   };
+  // }, [levelId]);
+
   const handleSelectQuestion = useCallback(
     (question: DiagnosticQuestion) => {
       if (!gameState.answeredQuestions.includes(question.text)) {
@@ -59,11 +76,18 @@ const GamePage: React.FC = () => {
     setShowConfirmation(false);
     setGameState((prev) => ({
       ...prev,
-      selectedResolution: [...(gameState.selectedResolution || []), pendingOption],
-      completed: true,
+      selectedResolution: [
+        ...(gameState.selectedResolution || []),
+        pendingOption,
+      ],
+      // completed: false,
     }));
 
     if (option?.isCorrect) {
+      setGameState((prev) => ({
+        ...prev,
+        completed: true,
+      }));
       completeLevel(scenario.id);
       setShowSuccess(true);
     } else {
@@ -89,6 +113,8 @@ const GamePage: React.FC = () => {
       navigate("/levels", { replace: true });
     }
   }, [levelId, navigate]);
+
+  const user = auth.currentUser;
 
   useEffect(() => {
     const fetchScenario = async () => {
@@ -127,6 +153,39 @@ const GamePage: React.FC = () => {
       setAccuracy(0);
     }
   }, [gameState.answeredQuestions, relevantQuestions, irrelevantQuestions]);
+
+  useEffect(() => {
+    if (user != null && levelId) {
+      fetchGameProgress(user.uid, levelId)
+        .then((progress) => {
+          if (progress) {
+            // Handle the fetched progress
+            console.log("Player's progress:", progress);
+            setGameState({
+              answeredQuestions: progress.answeredQuestions,
+              showResolution: progress.showResolution,
+              selectedResolution: progress.selectedResolution,
+              completed: progress.completed,
+            });
+          } else {
+            // Handle case where no progress exists
+            console.log("No progress found.");
+            // saveGameProgress(user.uid, gameState, levelId);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      console.log("No user logged in.");
+      navigate("/");
+    }
+  }, [auth]);
+
+  useEffect(() => {
+    if (user && levelId && scenario)
+      saveGameProgress(user.uid, gameState, levelId);
+  }, [gameState]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
@@ -167,7 +226,7 @@ const GamePage: React.FC = () => {
                 resolutionQuestion={scenario.resolutionQuestion}
                 selectedResolution={gameState.selectedResolution}
                 onSelectResolution={handleResolutionAttempt}
-                showResolution={gameState.showResolution}
+                showResolution={gameState.completed}
               />
             </div>
           </div>

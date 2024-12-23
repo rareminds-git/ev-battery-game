@@ -1,8 +1,8 @@
+import { Battery, BatteryCharging, BatteryFull, BatteryLow, BatteryMedium, BatteryWarning, Lock } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Level } from '../../../types/game';
-import { Battery, BatteryCharging, BatteryFull, BatteryLow, BatteryMedium, BatteryWarning, Lock } from 'lucide-react';
 import { useGameProgress } from '../../../context/GameProgressContext';
+import { Level } from '../../../types/game';
 import { getDifficultyBadge } from '../../../utils/difficultyBadge';
 
 interface LevelCardProps {
