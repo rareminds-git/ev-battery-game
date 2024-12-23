@@ -20,11 +20,6 @@ const Auth: React.FC = () => {
     e.preventDefault();
     isLogin
       ? login(
-          //   {
-          //   id: '1',
-          //   username: formData.username,
-          //   email: formData.email,
-          // }
           formData.email,
           formData.password
         )
@@ -42,7 +37,6 @@ const Auth: React.FC = () => {
         w-full max-w-md relative z-10"
       >
         <AuthHeader isLogin={isLogin} />
-        {/* <p>{formData.username}</p> */}
         <AuthForm
           isLogin={isLogin}
           formData={formData}

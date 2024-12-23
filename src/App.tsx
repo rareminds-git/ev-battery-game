@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Auth } from "./components/auth";
 import GamePage from "./components/game/GamePage";
 import LevelsPage from "./components/game/levels/LevelsPage";
@@ -22,6 +24,18 @@ const AppContent: React.FC = () => {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       {isAuthenticated && (
         <div className="fixed top-4 right-4 z-50">
           <ProfileMenu />

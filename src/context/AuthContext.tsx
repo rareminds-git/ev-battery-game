@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { auth, db } from "../firebaseConfig"; // Firebase config
 import { AuthState, User } from "../types/auth";
 
@@ -52,44 +53,64 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // Firebase login
   const login = async (email: string, password: string) => {
     if (!email || typeof email !== "string") {
-      console.log(email);
-      throw new Error("Invalid email provided");
+      // throw new Error("Invalid email provided");
+      toast.error("Invalid email provided");
     }
     if (!password || typeof password !== "string") {
-      throw new Error("Invalid password provided");
+      toast.error("Invalid password provided");
+      // throw new Error("Invalid password provided");
     }
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password.trim());
-    } catch (error) {
-      console.error("Error during login:", error);
-      throw error; // Pass the error to the component for user feedback
+      toast.success("Login successful!");
+    } catch (error: any) {
+      // Handle specific Firebase Auth errors
+      switch (error.code) {
+        case "auth/user-not-found":
+          toast.error("User not found. Please check your credentials.");
+          break;
+        case "auth/user-disabled":
+          toast.error("This user account has been disabled.");
+          break;
+        case "auth/invalid-credential":
+          toast.error("The provided credentials are invalid.");
+          break;
+        default:
+          toast.error("An unknown error occurred. Please try again.");
+          console.log("Error during login:", error.code, error.message);
+      }
+      // throw error; // Optional: Re-throw the error for further handling
     }
   };
 
   const signup = async (email: string, password: string, username: string) => {
     if (!email || typeof email !== "string") {
-      throw new Error("Invalid email provided");
+      toast.error("Invalid email provided");
+      // throw new Error("Invalid email provided");
     }
     if (!password || typeof password !== "string") {
-      throw new Error("Invalid password provided");
+      toast.error("Invalid password provided");
+      // throw new Error("Invalid password provided");
     }
     if (!username || typeof username !== "string") {
-      throw new Error("Invalid username provided");
+      toast.error("Invalid username provided");
+      // throw new Error("Invalid username provided");
     }
-  
+
     try {
       // Create user with email and password
-      const userCredential: UserCredential = await createUserWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password.trim()
-      );
-  
+      const userCredential: UserCredential =
+        await createUserWithEmailAndPassword(
+          auth,
+          email.trim(),
+          password.trim()
+        );
+
       const user = userCredential.user;
-  
+
       // Update user profile with username
       await updateProfile(user, { displayName: username });
-  
+
       // Store additional user information in Firestore
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
@@ -97,11 +118,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         username: username,
         createdAt: new Date().toISOString(),
       });
-  
-      console.log("User registered successfully");
-    } catch (error) {
-      console.error("Error during signup:", error);
-      throw error; // Pass the error to the component for user feedback
+
+      toast.success("User registered successfully");
+      // console.log("User registered successfully");
+    } catch (error: any) {
+      toast.error("Error during signup:", error.message);
+      // console.error("Error during signup:", error);
+      // throw error; // Pass the error to the component for user feedback
     }
   };
 
@@ -110,9 +133,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await signOut(auth);
       setAuthState({ user: null, isAuthenticated: false });
-    } catch (error) {
-      console.error("Error during logout:", error);
-      throw error;
+      toast.success("Logged Out!");
+    } catch (error:any) {
+      toast.success("Error during logout:", error.message);
+      // console.error("Error during logout:", error);
+      // throw error;
     }
   };
 

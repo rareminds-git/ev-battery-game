@@ -5,7 +5,7 @@ export interface DifficultyBadge {
 
 export interface DiagnosticQuestion {
   text: string;
-  answer: 'Yes' | 'No';
+  answer: "Yes" | "No";
   isRelevant: boolean;
   explanation?: string;
   hint?: string;
@@ -17,9 +17,17 @@ export interface ResolutionOption {
   isCorrect: boolean;
 }
 
+export interface Level {
+  id: number;
+  title: string;
+  symptoms: string;
+}
+
 export interface DiagnosticScenario {
   id: number;
   title: string;
+  symptoms: string;
+  clues: string[];
   description: string;
   questions: DiagnosticQuestion[];
   resolutionQuestion: {

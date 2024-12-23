@@ -1,5 +1,5 @@
 import { BookOpen, FastForward, LogOut, Play, Settings } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import AnimatedLogo from '../ui/AnimatedLogo';
@@ -10,10 +10,18 @@ import MenuItem from './MenuItem';
 const HomePage: React.FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [hasProgress, setHasProgress] = useState(false);
 
+  useEffect(() => {
+    const progress = localStorage.getItem('gameProgress');
+    if (progress) {
+      setHasProgress(true);  // User has game progress
+    }
+  }, []);
+  
   const menuItems = [
     { icon: Play, title: 'Start Game', onClick: () => navigate('/levels') },
-    { icon: FastForward, title: 'Continue', onClick: () => navigate('/levels') },
+    hasProgress ? { icon: FastForward, title: 'Continue', onClick: () => navigate('/levels') }: null,
     { icon: BookOpen, title: 'Instructions', onClick: () => navigate('/instructions') },
     { icon: Settings, title: 'Settings', onClick: () => navigate('/settings') },
     { icon: LogOut, title: 'Logout', onClick: logout },
@@ -30,7 +38,7 @@ const HomePage: React.FC = () => {
           </GlowingTitle>
         </div>
         <div className="space-y-4">
-          {menuItems.map((item, index) => (
+          {menuItems.filter(item => item !== null).map((item, index) => (
             <MenuItem
               key={index}
               icon={item.icon}

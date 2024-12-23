@@ -1,11 +1,9 @@
 // Import the functions you need from the SDKs you need
-import { getAnalytics } from "firebase/analytics";
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore'; // Import getFirestore for Firestore
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyD2TOxGH7d6cTmyw84hKARqYvUD0xqMaN8",
   authDomain: "ev-battery-diagnosis.firebaseapp.com",
@@ -18,6 +16,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+
+// Initialize Auth and Firestore with the modular SDK
+export const auth = getAuth(app); // Get Auth instance
+export const db = getFirestore(app); // Get Firestore instance
