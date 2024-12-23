@@ -26,14 +26,17 @@ const LevelsPage: React.FC = () => {
   useEffect(() => {
     if (auth.currentUser) {
       fetchTopLevel(auth.currentUser?.uid)
-        .then((topLevel) => {
-          // console.log(topLevel);
-          setTopLevel(topLevel);
-          for (let i = 1; i <= topLevel; i++) completeLevel(i);
+        .then((topLevel_) => {
+          console.log(topLevel);
+          setTopLevel(topLevel_);
         })
         .catch((error) => console.error(error));
     }
   }, [auth.currentUser]);
+
+  useEffect(() => {
+    for (let i = 1; i <= topLevel; i++) completeLevel(i);
+  }, [topLevel]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">
