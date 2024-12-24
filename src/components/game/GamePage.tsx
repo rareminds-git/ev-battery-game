@@ -37,18 +37,6 @@ const GamePage: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
 
-  // useEffect(() => {
-  //   let playerProgress: SaveData = {
-  //     currentLevel: {
-  //       id: 1,
-  //       revealedQuestionsIds: [],
-  //       attemptedAnswersIds: [],
-  //     },
-  //     score: 0,
-  //     completed: [],
-  //   };
-  // }, [levelId]);
-
   const handleSelectQuestion = useCallback(
     (question: DiagnosticQuestion) => {
       if (!gameState.answeredQuestions.includes(question.text)) {
@@ -170,7 +158,7 @@ const GamePage: React.FC = () => {
           } else {
             // Handle case where no progress exists
             console.log("No progress found.");
-            // saveGameProgress(user.uid, gameState, levelId);
+            saveGameProgress(user.uid, gameState, levelId);
           }
         })
         .catch((error) => {
@@ -237,6 +225,7 @@ const GamePage: React.FC = () => {
               setShowConfirmation(false);
               setPendingOption(null);
             }}
+            text="Are you sure you want to select this answer?"
             option={
               scenario.resolutionQuestion.options.find(
                 (opt) => opt.id === pendingOption

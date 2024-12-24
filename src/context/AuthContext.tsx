@@ -37,7 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         if (firebaseUser) {
           // Map FirebaseUser to your User type
           const user: User = {
-            uid: firebaseUser.uid,
+            id: firebaseUser.uid,
+            username: String(firebaseUser.displayName),
             email: firebaseUser.email || "",
           };
           setAuthState({ user, isAuthenticated: true });

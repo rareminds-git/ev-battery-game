@@ -1,18 +1,20 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
+import React from 'react';
 
 interface ConfirmationModalProps {
   isOpen: boolean;
   onConfirm: () => void;
   onCancel: () => void;
-  option: string;
+  text: string;
+  option?: string;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onConfirm,
   onCancel,
+  text,
   option
 }) => {
   return (
@@ -38,14 +40,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               <div className="p-3 rounded-full bg-blue-500/20">
                 <AlertCircle className="w-6 h-6 text-blue-400" />
               </div>
-              <h3 className="text-xl font-semibold text-white">Confirm Answer</h3>
+              <h3 className="text-xl font-semibold text-white">Confirmation</h3>
             </div>
             
             <p className="text-slate-300 mb-6">
-              Are you sure you want to select this answer?
+              {text}
               <br />
               <span className="text-blue-400 font-medium mt-2 block">
-                "{option}"
+                {option}
               </span>
             </p>
             

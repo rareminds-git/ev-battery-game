@@ -59,8 +59,10 @@ const LevelsPage: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex items-center justify-center mb-12">
-          <AnimatedTitle text="DIAGNOSTIC LEVELS" className="text-center" />
+        <div className="space-y-12 pt-16">
+          <div className="text-center pt-4 pb-10 scale-75 sm:scale-100">
+            <AnimatedTitle text="DIAGNOSTIC LEVELS" className="text-center" />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

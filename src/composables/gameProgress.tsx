@@ -1,10 +1,4 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc
-} from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Adjust import based on your file structure
 
 const saveGameProgress = async (
@@ -41,9 +35,9 @@ const fetchGameProgress = async (userId: string, level: string) => {
     const progressRef = doc(db, "playerProgress", userId, "levels", level); // level as a document in the subcollection
 
     const docSnap = await getDoc(progressRef);
+    // console.log(docSnap)
 
     if (docSnap.exists()) {
-      // Document exists, return the data
       // console.log("Fetched game progress:", docSnap.data());
       return docSnap.data(); // Data retrieved from Firestore
     } else {
@@ -59,4 +53,56 @@ const fetchGameProgress = async (userId: string, level: string) => {
   }
 };
 
-export { fetchGameProgress, saveGameProgress };
+const checkGameProgress = async (userId: string) => {
+  try {
+    console.log("Fetching progress for userId:", userId);
+
+    // Reference to the 'levels' subcollection under the specific user document
+    const progressRef = collection(db, "playerProgress", userId, "levels");
+
+    // Query to fetch documents where `completed` is true
+    const progressQuery = query(progressRef); // Add filters like `where()` if needed
+
+    // Fetch the documents matching the query
+    const querySnapshot = await getDocs(progressQuery);
+
+    if (!querySnapshot.empty) {
+      console.log(
+        "User progress found:",
+        querySnapshot.docs.map((doc) => doc.data())
+      );
+      return true; // Progress exists
+    } else {
+      console.log("No progress found for userId:", userId);
+      return false; // No progress
+    }
+  } catch (error) {
+    console.error("Error fetching game progress:", error);
+    return false; // Handle errors
+  }
+};
+
+const deleteLevelRecords = async (userId: string) => {
+  try {
+    // Reference to the 'levels' subcollection
+    const levelsRef = collection(db, "playerProgress", userId, "levels");
+
+    // Fetch all documents in the subcollection
+    const querySnapshot = await getDocs(levelsRef);
+
+    // Iterate through the documents and delete each one
+    const deletePromises = querySnapshot.docs.map((docSnap) =>
+      deleteDoc(doc(db, "playerProgress", userId, "levels", docSnap.id))
+    );
+
+    // Wait for all deletions to complete
+    await Promise.all(deletePromises);
+
+    console.log("All levels deleted successfully.");
+  } catch (error) {
+    console.error("Error deleting levels:", error);
+  }
+};
+
+export { checkGameProgress, deleteLevelRecords, fetchGameProgress, saveGameProgress };
+
