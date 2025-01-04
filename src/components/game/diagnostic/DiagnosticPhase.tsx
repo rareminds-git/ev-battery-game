@@ -1,8 +1,8 @@
+import { motion } from 'framer-motion';
 import React from 'react';
 import { DiagnosticQuestion, ResolutionOption } from '../../../types/game';
 import QuestionCard from './QuestionCard';
 import ResolutionPhase from './ResolutionPhase';
-import { motion } from 'framer-motion';
 
 interface DiagnosticPhaseProps {
   questions: DiagnosticQuestion[];
@@ -12,7 +12,7 @@ interface DiagnosticPhaseProps {
     text: string;
     options: ResolutionOption[];
   };
-  selectedResolution?: string;
+  selectedResolution?: string[];
   onSelectResolution: (optionId: string) => void;
   showResolution: boolean;
 }
@@ -43,7 +43,7 @@ const DiagnosticPhase: React.FC<DiagnosticPhaseProps> = ({
               key={index}
               question={question}
               isAnswered={answeredQuestions.includes(question.text)}
-              onSelect={() => onSelectQuestion(question)}
+              onSelect={() => !showResolution && onSelectQuestion(question)}
             />
           ))}
         </div>

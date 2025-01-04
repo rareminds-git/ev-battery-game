@@ -1,17 +1,18 @@
+import { LogOut, User } from 'lucide-react';
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { User, LogOut } from 'lucide-react';
 
 const ProfileMenu: React.FC = () => {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
   if (!user) return null;
+  console.log(user)
 
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {}}
         className="flex items-center gap-2 px-3 py-2 rounded-lg
           bg-slate-800/50 hover:bg-slate-700/50 
           border border-slate-700/50 hover:border-blue-500/50
