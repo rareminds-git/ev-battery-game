@@ -1,7 +1,7 @@
-import React from 'react';
-import { FormData } from '../../types/auth';
-import InputField from '../ui/InputField';
-import AuthButton from './AuthButton';
+import React from "react";
+import { FormData } from "../../types/auth";
+import InputField from "../ui/InputField";
+import AuthButton from "./AuthButton";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -10,17 +10,23 @@ interface AuthFormProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ isLogin, formData, setFormData, onSubmit }) => (
+const AuthForm: React.FC<AuthFormProps> = ({
+  isLogin,
+  formData,
+  setFormData,
+  onSubmit,
+}) => (
   <form onSubmit={onSubmit} className="space-y-6">
-    <InputField
-      label="Username"
-      type="text"
-      placeholder="Enter your username"
-      value={formData.username}
-      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-    />
-    
     {!isLogin && (
+      <InputField
+        label="Username"
+        type="text"
+        placeholder="Enter your username"
+        value={formData.username}
+        onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+      />
+    )}
+    { (
       <InputField
         label="Email"
         type="email"
@@ -29,7 +35,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ isLogin, formData, setFormData, onS
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
       />
     )}
-    
+
     <InputField
       label="Password"
       type="password"

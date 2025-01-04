@@ -1,26 +1,96 @@
-import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { Play, FastForward, BookOpen, Settings, LogOut } from 'lucide-react';
-import MenuItem from './MenuItem';
-import GlowingTitle from '../ui/GlowingTitle';
-import AnimatedLogo from '../ui/AnimatedLogo';
-import CircuitLines from '../ui/animations/CircuitLines';
+import { BookOpen, FastForward, LogOut, Play, Settings } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  checkGameProgress,
+  deleteLevelRecords,
+} from "../../composables/gameProgress";
+import { useAuth } from "../../context/AuthContext";
+import { useGameProgress } from "../../context/GameProgressContext";
+import { auth } from "../../firebaseConfig";
+import { ConfirmationModal } from "../game/feedback";
+import AnimatedLogo from "../ui/AnimatedLogo";
+import CircuitLines from "../ui/animations/CircuitLines";
+import GlowingTitle from "../ui/GlowingTitle";
+import MenuItem from "./MenuItem";
 
 const HomePage: React.FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [hasProgress, setHasProgress] = useState(false);
+  const [menuItems, setMenuItems] = useState<any>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const { resetCompleteLevel } = useGameProgress();
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const menuItems = [
-    { icon: Play, title: 'Start Game', onClick: () => navigate('/levels') },
-    { icon: FastForward, title: 'Continue', onClick: () => navigate('/levels') },
-    { icon: BookOpen, title: 'Instructions', onClick: () => navigate('/instructions') },
-    { icon: Settings, title: 'Settings', onClick: () => navigate('/settings') },
-    { icon: LogOut, title: 'Logout', onClick: logout },
-  ];
+  useEffect(() => {
+    if (auth.currentUser) {
+      setUserId(auth.currentUser.uid);
+    }
+  }, [auth.currentUser]);
+
+  useEffect(() => {
+    if (userId != null) {
+      const fetchProgress = async () => {
+        try {
+          const progressExists = await checkGameProgress(userId);
+          console.log(progressExists);
+          setHasProgress(progressExists);
+        } catch (error) {
+          console.error("Error checking game progress:", error);
+        }
+      };
+      fetchProgress();
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    setMenuItems([
+      {
+        icon: Play,
+        title: "Start Game",
+        onClick: () => {
+          if (hasProgress) {
+            setShowConfirmation(true);
+          } else {
+            navigate("/levels");
+          }
+        },
+      },
+      hasProgress
+        ? {
+            icon: FastForward,
+            title: "Continue",
+            onClick: () => navigate("/levels"),
+          }
+        : null,
+      {
+        icon: BookOpen,
+        title: "Instructions",
+        onClick: () => navigate("/instructions"),
+      },
+      {
+        icon: Settings,
+        title: "Settings",
+        onClick: () => navigate("/settings"),
+      },
+      { icon: LogOut, title: "Logout", onClick: logout },
+    ]);
+  }, [hasProgress, userId]);
+
+  const handleConfirmResolution = () => {
+    deleteLevelRecords(userId || "")
+      .then(() => {
+        resetCompleteLevel();
+        navigate("/levels");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden flex items-center">
       <CircuitLines />
       <div className="max-w-md mx-auto relative z-10">
         <div className="flex items-center gap-6 mb-12">
@@ -30,16 +100,26 @@ const HomePage: React.FC = () => {
           </GlowingTitle>
         </div>
         <div className="space-y-4">
-          {menuItems.map((item, index) => (
-            <MenuItem
-              key={index}
-              icon={item.icon}
-              title={item.title}
-              onClick={item.onClick}
-            />
-          ))}
+          {menuItems
+            .filter((item: any) => item !== null)
+            .map((item: any, index: number) => (
+              <MenuItem
+                key={index}
+                icon={item.icon}
+                title={item.title}
+                onClick={item.onClick}
+              />
+            ))}
         </div>
       </div>
+      <ConfirmationModal
+        isOpen={showConfirmation}
+        onConfirm={handleConfirmResolution}
+        onCancel={() => {
+          setShowConfirmation(false);
+        }}
+        text={"This will delete all your progress."}
+      />
     </div>
   );
 };

@@ -1,12 +1,12 @@
+import { motion } from 'framer-motion';
+import { CheckCircle, XCircle } from 'lucide-react';
 import React from 'react';
 import { ResolutionOption } from '../../../types/game';
-import { CheckCircle, XCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface ResolutionPhaseProps {
   question: string;
   options: ResolutionOption[];
-  selectedOption?: string;
+  selectedOption?: string[];
   onSelectOption: (optionId: string) => void;
   enabled: boolean;
 }
@@ -28,14 +28,14 @@ const ResolutionPhase: React.FC<ResolutionPhaseProps> = ({
       
       <div className="grid gap-4">
         {options.map((option) => {
-          const isSelected = selectedOption === option.id;
-          const showResult = selectedOption !== undefined;
+          const isSelected = selectedOption?.includes(option.id);
+          const showResult = selectedOption?.includes(option.id);
           
           return (
             <motion.button
               key={option.id}
               onClick={() => !showResult && onSelectOption(option.id)}
-              disabled={showResult}
+              disabled={enabled}
               whileHover={!showResult ? { scale: 1.02 } : {}}
               whileTap={!showResult ? { scale: 0.98 } : {}}
               className={`p-4 rounded-lg border transition-all duration-300 ${

@@ -1,8 +1,8 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, ArrowRight, Home } from 'lucide-react';
-import { scenarios } from '../../../data/diagnosticScenarios';
-import { useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, Home, Trophy } from "lucide-react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { scenarios } from "../../../data/diagnosticScenarios";
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -10,13 +10,17 @@ interface SuccessModalProps {
   currentLevel: number;
 }
 
-const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onNext, currentLevel }) => {
+const TimeOutModal: React.FC<SuccessModalProps> = ({
+  isOpen,
+  onNext,
+  currentLevel,
+}) => {
   const navigate = useNavigate();
-  const isLastLevel = !scenarios.some(s => s.id === currentLevel + 1);
+  const isLastLevel = !scenarios.some((s) => s.id === currentLevel + 1);
 
   const handleNext = () => {
     if (isLastLevel) {
-      navigate('/levels');
+      navigate("/levels");
     } else {
       onNext();
     }
@@ -41,8 +45,10 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onNext, currentLeve
           >
             {/* Success Animation */}
             <div className="absolute inset-0 opacity-30">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-blue-500/20
-                animate-gradient-x" />
+              <div
+                className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-emerald-500/20 to-blue-500/20
+                animate-gradient-x"
+              />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(56,189,248,0.1),transparent_100%)]" />
             </div>
 
@@ -51,15 +57,16 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onNext, currentLeve
               <div className="mb-4 inline-flex p-3 rounded-full bg-emerald-500/20 animate-bounce">
                 <Trophy className="w-8 h-8 text-emerald-400" />
               </div>
-              
+
               <h3 className="text-2xl font-bold text-white mb-2">
-                {isLastLevel ? 'Congratulations!' : 'Excellent Diagnosis!'}
+                {/* {isLastLevel ? "Congratulations!" : "Excellent Diagnosis!"} */}Oops Time Up!
               </h3>
-              
+
               <p className="text-slate-300 mb-6">
-                {isLastLevel 
+                {/* {isLastLevel
                   ? "You've completed all available diagnostic scenarios!"
-                  : `You've successfully completed Level ${currentLevel}. Ready for the next challenge?`}
+                  : `You've successfully completed Level ${currentLevel}. Ready for the next challenge?`} */}
+                  You've failed to diagnose the scenario. Better luck next time!
               </p>
 
               <button
@@ -92,7 +99,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onNext, currentLeve
                   style={{
                     top: `${20 + Math.random() * 60}%`,
                     left: `${20 + Math.random() * 60}%`,
-                    animationDelay: `${i * 0.2}s`
+                    animationDelay: `${i * 0.2}s`,
                   }}
                 />
               ))}
@@ -104,4 +111,4 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onNext, currentLeve
   );
 };
 
-export default SuccessModal;
+export default TimeOutModal;
