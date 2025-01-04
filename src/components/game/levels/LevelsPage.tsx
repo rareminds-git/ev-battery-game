@@ -2,27 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { levels } from '../../../data/levels';
 import { Home } from "lucide-react";
-import { fetchAllLevels, fetchTopLevel } from "../../../composables/fetchLevel";
+import { useRecoilState } from "recoil";
+import { fetchTopLevel } from "../../../composables/fetchLevel";
 import { useGameProgress } from "../../../context/GameProgressContext";
+import { gameScenarios } from "../../../data/recoilState";
 import { auth } from "../../../firebaseConfig";
-import { Level } from "../../../types/game";
 import AnimatedTitle from "../../ui/AnimatedTitle";
 import CircuitLines from "../../ui/animations/CircuitLines";
 import LevelCard from "./LevelCard";
 
 const LevelsPage: React.FC = () => {
   const navigate = useNavigate();
-  const [levels, setLevels] = useState<Level[]>([]);
+  const [levels, setLevels] = useRecoilState<any>(gameScenarios);
   const [topLevel, setTopLevel] = useState(0);
   const { completeLevel } = useGameProgress();
-  useEffect(() => {
-    const fetchLevels = async () => {
-      const allLevels: Level[] = await fetchAllLevels();
-      setLevels(allLevels);
-    };
-    fetchLevels();
-    // console.log(levels)
-  }, []);
   useEffect(() => {
     if (auth.currentUser) {
       fetchTopLevel(auth.currentUser?.uid)
@@ -66,7 +59,7 @@ const LevelsPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {levels.map((level) => (
+          {levels?.map((level) => (
             <LevelCard key={level.id} level={level} />
           ))}
         </div>

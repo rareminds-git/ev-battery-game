@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRecoilState } from "recoil";
 import { Auth } from "./components/auth";
 import GamePage from "./components/game/GamePage";
 import LevelsPage from "./components/game/levels/LevelsPage";
@@ -10,13 +11,35 @@ import { InstructionsPage } from "./components/instructions";
 import { LoaderScreen } from "./components/loader";
 import SettingsPage from "./components/settings/SettingsPage";
 import ProfileMenu from "./components/ui/ProfileMenu";
+import { fetchAllLevels } from "./composables/fetchLevel";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { GameProgressProvider } from "./context/GameProgressContext";
 import { SettingsProvider } from "./context/SettingsContext";
+import { gameScenarios } from "./data/recoilState";
 
 const AppContent: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { isAuthenticated } = useAuth();
+  const [_gameScenarios, _setGameScenarios] = useRecoilState(gameScenarios);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const scenarios = await fetchAllLevels();
+        _setGameScenarios(scenarios); // Update the state
+        console.log(scenarios);
+      } catch (error) {
+        console.error("Error fetching levels:", error);
+      }
+    };
+
+    fetchData();
+  }, []); // Runs only once on component mount
+
+  // Use this to log updated _gameScenarios
+  // useEffect(() => {
+  //   console.log("Updated scenarios:", _gameScenarios);
+  // }, [_gameScenarios]);
 
   if (isLoading) {
     return <LoaderScreen onComplete={() => setIsLoading(false)} />;

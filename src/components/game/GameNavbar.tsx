@@ -1,6 +1,7 @@
 import { Battery, ChevronLeft, Home, Menu } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { formatTime } from "../../composables/time";
 import CluesList from "./clues/CluesList";
 
 interface GameNavbarProps {
@@ -9,6 +10,7 @@ interface GameNavbarProps {
   totalQuestions: number;
   accuracy: number;
   currentHint?: string;
+  timeLeft: number;
 }
 
 const GameNavbar: React.FC<GameNavbarProps> = ({
@@ -17,10 +19,12 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   totalQuestions,
   accuracy,
   currentHint,
+  timeLeft,
 }) => {
   const navigate = useNavigate();
   const [showStats, setShowStats] = useState(false);
   const points = accuracy * 10;
+
 
   return (
     <nav className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
@@ -70,6 +74,12 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
 
                   {/* Stats Section */}
                   <div className="space-y-3">
+                    <div className="text-slate-400 text-sm flex items-center justify-between">
+                      <span>Time Remaining</span>{" "}
+                      <span>
+                        {timeLeft > 0 ? formatTime(timeLeft) : "Time’s up!"}
+                      </span>
+                    </div>
                     <StatItem
                       label="Accuracy"
                       value={`${accuracy.toFixed(1)}%`}

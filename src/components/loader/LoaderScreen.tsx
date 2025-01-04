@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import CircuitLines from '../ui/animations/CircuitLines';
 import GlowingTitle from '../ui/GlowingTitle';
 import BatteryLoader from './BatteryLoader';
-import CircuitLines from '../ui/animations/CircuitLines';
 
 interface LoaderScreenProps {
   onComplete: () => void;
@@ -32,7 +32,7 @@ const LoaderScreen: React.FC<LoaderScreenProps> = ({ onComplete }) => {
           <BatteryLoader progress={progress} />
         </div>
         
-        <GlowingTitle className="mb-16">
+        <GlowingTitle className="mb-16 text-center">
           EV Battery Fault Diagnosis System
         </GlowingTitle>
         

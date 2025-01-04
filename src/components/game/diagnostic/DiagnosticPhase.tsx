@@ -43,7 +43,7 @@ const DiagnosticPhase: React.FC<DiagnosticPhaseProps> = ({
               key={index}
               question={question}
               isAnswered={answeredQuestions.includes(question.text)}
-              onSelect={() => onSelectQuestion(question)}
+              onSelect={() => !showResolution && onSelectQuestion(question)}
             />
           ))}
         </div>
