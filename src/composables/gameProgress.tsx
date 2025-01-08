@@ -17,8 +17,8 @@ const saveGameProgress = async (
 
     if (docSnap.exists()) {
       // Document exists, update it
-      console.log(`Updating progress for user ${userId}, level ${level}`);
-      console.log(progress)
+      // console.log(`Updating progress for user ${userId}, level ${level}`);
+      // console.log(progress)
       await updateDoc(progressRef, progress); // Overwrite existing data
     } else {
       // Document does not exist, create a new one
