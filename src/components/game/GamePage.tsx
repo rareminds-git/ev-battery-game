@@ -34,7 +34,7 @@ const GamePage: React.FC = () => {
   const [scenario, setScenario] = useState<DiagnosticScenario | null>();
   const [relevantQuestions, setRelevantQuestions] = useState<any>();
   const [irrelevantQuestions, setIrrelevantQuestions] = useState<any>();
-  const [accuracy, setAccuracy] = useState<any>();
+  const [accuracy, setAccuracy] = useState(0);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingOption, setPendingOption] = useState<string | null>(null);
@@ -42,14 +42,18 @@ const GamePage: React.FC = () => {
   const [showError, setShowError] = useState(false);
   const [_gamePoints, _setGamePoints] = useRecoilState(gamePoints);
   const [timeOut, setTimeOut] = useState(false);
+  const [points, setPoints] = useState(100);
+  const totalPoints = 100;
+  const totalTime = 100;
 
   const [gameState, setGameState] = useState({
     answeredQuestions: [] as string[],
     showResolution: true,
     selectedResolution: [] as string[],
     completed: false,
-    timeLeft: 300,
+    timeLeft: totalTime,
     score: 0,
+    accuracy: 0,
   });
 
   useEffect(() => {
@@ -62,8 +66,6 @@ const GamePage: React.FC = () => {
   useEffect(() => {
     try {
       if (levelId) setScenario(getScenario);
-      console.log(levelId);
-      console.log(scenario);
       if (scenario == null || scenario == undefined) return;
       const relevantQuestions_ = scenario.questions.filter((q) => q.isRelevant);
       setRelevantQuestions(relevantQuestions_);
@@ -134,8 +136,9 @@ const GamePage: React.FC = () => {
       showResolution: true,
       selectedResolution: [],
       completed: false,
-      timeLeft: 300,
+      timeLeft: totalTime,
       score: 0,
+      accuracy: 0,
     });
 
     if (scenarios?.some((s) => s.id === nextLevel)) {
@@ -147,44 +150,99 @@ const GamePage: React.FC = () => {
 
   const user = auth.currentUser;
 
-  // useEffect(() => {
-  //   const fetchScenario = async () => {
-  //     try {
-  //       const scenario_: any = await fetchLevelById(levelId);
-  //       setScenario(scenario_);
-  //       const relevantQuestions_ = scenario_.questions.filter(
-  //         (q) => q.isRelevant
-  //       );
-  //       setRelevantQuestions(relevantQuestions_);
-  //       const irrelevantQuestions_ = scenario_.questions.filter(
-  //         (q) => q.isRelevant == false
-  //       );
-  //       setIrrelevantQuestions(irrelevantQuestions_);
-  //     } catch (error) {
-  //       console.error("Error fetching scenario:", error);
-  //       navigate("/levels");
-  //     }
-  //   };
-
-  //   fetchScenario();
-  // }, [levelId, navigate]);
-
   useEffect(() => {
-    if (relevantQuestions && gameState.answeredQuestions.length > 0) {
-      const relevantAnswers = gameState.answeredQuestions.filter((q) =>
-        relevantQuestions.some((rq) => rq.text === q)
-      ).length;
-      const irrelevantAnswers = gameState.answeredQuestions.filter((q) =>
-        irrelevantQuestions.some((rq) => rq.text === q)
-      ).length;
-      setAccuracy(
-        scenario?.questions.length &&
-          (relevantAnswers / scenario?.questions.length) * 100
+    if (
+      !(
+        gameState.selectedResolution.length > 0 ||
+        gameState.answeredQuestions.length > 0
+      )
+    ) {
+      console.log("No resolutions or answers provided.");
+      return;
+    }
+
+    let resolutionPointDeduction = 0;
+    let answeredQuestionsPointDeduction = 0;
+    let irrelevantQuestionsPointDeduction = 0;
+
+    const resolutionOptions = scenario?.resolutionQuestion?.options || [];
+    const totalResolutionOptions = resolutionOptions.length;
+    const totalQuestions = scenario?.questions?.length || 0;
+
+    // Calculate points deducted for wrong answers in resolution
+    const selectedWrongAnswers = gameState.selectedResolution.filter((q) =>
+      resolutionOptions.some((option) => option.id === q && !option.isCorrect)
+    ).length;
+
+    if (totalResolutionOptions > 0) {
+      resolutionPointDeduction =
+        (selectedWrongAnswers * totalPoints) / totalResolutionOptions;
+      console.log("Resolution Point Deduction:", resolutionPointDeduction);
+    } else {
+      console.warn("Resolution options length is undefined or zero.");
+    }
+
+    // Calculate points deducted for answered questions
+    if (totalResolutionOptions > 0 && totalQuestions > 0) {
+      answeredQuestionsPointDeduction =
+        (totalPoints / totalResolutionOptions / totalQuestions) *
+        gameState.answeredQuestions.length;
+      console.log(
+        "Answered Questions Point Deduction:",
+        answeredQuestionsPointDeduction
       );
     } else {
-      setAccuracy(0);
+      console.warn("Resolution options or questions are undefined or zero.");
     }
-  }, [gameState.answeredQuestions, relevantQuestions, irrelevantQuestions]);
+
+    // Update points
+    setPoints(
+      totalPoints - resolutionPointDeduction - answeredQuestionsPointDeduction
+    );
+
+    // Calculate points deducted for irrelevant questions answered
+    const irrelevantQuestionsAnswered = gameState.answeredQuestions.filter(
+      (q) =>
+        scenario?.questions?.some(
+          (question) => question.text === q && !question.isRelevant
+        )
+    ).length;
+
+    if (irrelevantQuestions?.length > 0) {
+      const totalIrrelevantQuestions = irrelevantQuestions?.length; // Avoid division by zero
+      if (totalResolutionOptions > 0) {
+        irrelevantQuestionsPointDeduction =
+          (totalPoints / totalResolutionOptions / totalIrrelevantQuestions) *
+          irrelevantQuestionsAnswered;
+        console.log(
+          totalPoints,
+          totalResolutionOptions,
+          totalIrrelevantQuestions,
+          irrelevantQuestionsAnswered
+        );
+        console.log(
+          "Irrelevant Questions Point Deduction:",
+          irrelevantQuestionsPointDeduction
+        );
+      } else {
+        console.warn(
+          "Resolution options or irrelevant questions are undefined."
+        );
+      }
+
+      console.log(irrelevantQuestionsPointDeduction);
+
+      setAccuracy(
+        100 - irrelevantQuestionsPointDeduction - resolutionPointDeduction
+      );
+    }
+  }, [
+    gameState.selectedResolution,
+    scenario?.resolutionQuestion?.options,
+    gameState.answeredQuestions,
+    scenario?.questions,
+    irrelevantQuestions?.length,
+  ]);
 
   useEffect(() => {
     if (user != null && levelId) {
@@ -200,6 +258,7 @@ const GamePage: React.FC = () => {
               completed: progress.completed,
               timeLeft: progress.timeLeft,
               score: progress.score,
+              accuracy: progress.accuracy,
             });
           } else {
             // Handle case where no progress exists
@@ -247,6 +306,29 @@ const GamePage: React.FC = () => {
     return () => clearInterval(timerId); // Cleanup interval on component unmount
   }, [gameState.timeLeft]);
 
+  useEffect(() => {
+    if (!scenario?.questions) return;
+    const irrelevantQuestions_ = scenario.questions.filter(
+      (q) => !q.isRelevant
+    );
+    setIrrelevantQuestions(irrelevantQuestions_);
+    console.log(irrelevantQuestions);
+  }, [scenario?.questions]);
+
+  useEffect(()=>{
+    setGameState((prev) => ({
+      ...prev,
+      accuracy: accuracy,
+    }));
+  },[accuracy])
+
+  useEffect(()=>{
+    setGameState((prev) => ({
+      ...prev,
+      score: points,
+    }));
+  },[points])
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
       {scenario != null && (
@@ -256,6 +338,7 @@ const GamePage: React.FC = () => {
             questionsAnswered={gameState.answeredQuestions.length}
             totalQuestions={scenario.questions.length}
             accuracy={accuracy}
+            playerPoints={points}
             currentHint={
               scenario.questions.find(
                 (q) => !gameState.answeredQuestions.includes(q.text)

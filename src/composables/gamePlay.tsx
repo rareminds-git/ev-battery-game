@@ -5,3 +5,4 @@ export const formatTime = (time: number) => {
     .toString()
     .padStart(2, "0")}`;
 };
+

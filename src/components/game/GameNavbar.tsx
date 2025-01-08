@@ -1,7 +1,7 @@
 import { Battery, ChevronLeft, Home, Menu } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { formatTime } from "../../composables/time";
+import { formatTime } from "../../composables/gamePlay";
 import CluesList from "./clues/CluesList";
 
 interface GameNavbarProps {
@@ -11,6 +11,7 @@ interface GameNavbarProps {
   accuracy: number;
   currentHint?: string;
   timeLeft: number;
+  playerPoints: number;
 }
 
 const GameNavbar: React.FC<GameNavbarProps> = ({
@@ -18,13 +19,13 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
   questionsAnswered,
   totalQuestions,
   accuracy,
+  playerPoints,
   currentHint,
   timeLeft,
 }) => {
   const navigate = useNavigate();
   const [showStats, setShowStats] = useState(false);
   const points = accuracy * 10;
-
 
   return (
     <nav className="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
@@ -91,8 +92,8 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
                       color="text-blue-400"
                     />
                     <StatItem
-                      label="Points"
-                      value={points.toString()}
+                      label="Maximum Points"
+                      value={playerPoints.toString()}
                       color="text-yellow-400"
                     />
 
@@ -103,9 +104,7 @@ const GameNavbar: React.FC<GameNavbarProps> = ({
                           className="h-full bg-gradient-to-r from-blue-500 to-emerald-500
                             transition-all duration-300"
                           style={{
-                            width: `${
-                              (questionsAnswered / totalQuestions) * 100
-                            }%`,
+                            width: `${playerPoints}%`,
                           }}
                         />
                       </div>
