@@ -20,7 +20,7 @@ const LevelsPage: React.FC = () => {
     if (auth.currentUser) {
       fetchTopLevel(auth.currentUser?.uid)
         .then((topLevel_) => {
-          console.log(topLevel);
+          // console.log(topLevel);
           setTopLevel(topLevel_);
         })
         .catch((error) => console.error(error));
@@ -59,7 +59,7 @@ const LevelsPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {levels?.map((level) => (
+          {levels?.map((level: any) => (
             <LevelCard key={level.id} level={level} />
           ))}
         </div>
