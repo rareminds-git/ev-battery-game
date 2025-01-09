@@ -9,6 +9,7 @@ import LevelsPage from "./components/game/levels/LevelsPage";
 import HomePage from "./components/home/HomePage";
 import { InstructionsPage } from "./components/instructions";
 import { LoaderScreen } from "./components/loader";
+import { ScoresPage } from "./components/scores";
 import SettingsPage from "./components/settings/SettingsPage";
 import ProfileMenu from "./components/ui/ProfileMenu";
 import { fetchAllLevels } from "./composables/fetchLevel";
@@ -26,20 +27,14 @@ const AppContent: React.FC = () => {
     const fetchData = async () => {
       try {
         const scenarios = await fetchAllLevels();
-        _setGameScenarios(scenarios); // Update the state
-        console.log(scenarios);
+        _setGameScenarios(scenarios);
       } catch (error) {
         console.error("Error fetching levels:", error);
       }
     };
 
     fetchData();
-  }, []); // Runs only once on component mount
-
-  // Use this to log updated _gameScenarios
-  // useEffect(() => {
-  //   console.log("Updated scenarios:", _gameScenarios);
-  // }, [_gameScenarios]);
+  }, []);
 
   if (isLoading) {
     return <LoaderScreen onComplete={() => setIsLoading(false)} />;
@@ -71,6 +66,7 @@ const AppContent: React.FC = () => {
           <Route path="/game/:levelId" element={<GamePage />} />
           <Route path="/instructions" element={<InstructionsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/scores" element={<ScoresPage />} />
         </Routes>
       ) : (
         <Auth />

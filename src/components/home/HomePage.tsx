@@ -1,4 +1,4 @@
-import { BookOpen, FastForward, LogOut, Play, Settings } from "lucide-react";
+import { BookOpen, FastForward, LogOut, Play, Settings, Trophy } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -34,7 +34,6 @@ const HomePage: React.FC = () => {
       const fetchProgress = async () => {
         try {
           const progressExists = await checkGameProgress(userId);
-          console.log(progressExists);
           setHasProgress(progressExists);
         } catch (error) {
           console.error("Error checking game progress:", error);
@@ -64,6 +63,11 @@ const HomePage: React.FC = () => {
             onClick: () => navigate("/levels"),
           }
         : null,
+      {
+        icon: Trophy,
+        title: "View Scores",
+        onClick: () => navigate("/scores"),
+      },
       {
         icon: BookOpen,
         title: "Instructions",

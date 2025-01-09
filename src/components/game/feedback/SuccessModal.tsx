@@ -16,7 +16,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onNext, currentLeve
 
   const handleNext = () => {
     if (isLastLevel) {
-      navigate('/levels');
+      navigate('/scores');
     } else {
       onNext();
     }
@@ -71,8 +71,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({ isOpen, onNext, currentLeve
               >
                 {isLastLevel ? (
                   <>
-                    Return to Levels
-                    <Home className="w-5 h-5" />
+                    View Your Scores
+                    <Trophy className="w-5 h-5" />
                   </>
                 ) : (
                   <>
