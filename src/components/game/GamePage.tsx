@@ -34,7 +34,7 @@ const GamePage: React.FC = () => {
   const [scenario, setScenario] = useState<DiagnosticScenario | null>();
   const [relevantQuestions, setRelevantQuestions] = useState<any>();
   const [irrelevantQuestions, setIrrelevantQuestions] = useState<any>();
-  const [accuracy, setAccuracy] = useState(0);
+  const [accuracy, setAccuracy] = useState(100);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingOption, setPendingOption] = useState<string | null>(null);
@@ -137,8 +137,8 @@ const GamePage: React.FC = () => {
       selectedResolution: [],
       completed: false,
       timeLeft: totalTime,
-      score: 0,
-      accuracy: 0,
+      score: 100,
+      accuracy: 100,
     });
 
     if (scenarios?.some((s) => s.id === nextLevel)) {
