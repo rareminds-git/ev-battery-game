@@ -44,7 +44,7 @@ const GamePage: React.FC = () => {
   const [timeOut, setTimeOut] = useState(false);
   const [points, setPoints] = useState(100);
   const totalPoints = 100;
-  const totalTime = 100;
+  const totalTime = 180;
 
   const [gameState, setGameState] = useState({
     answeredQuestions: [] as string[],
@@ -315,19 +315,31 @@ const GamePage: React.FC = () => {
     console.log(irrelevantQuestions);
   }, [scenario?.questions]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setGameState((prev) => ({
       ...prev,
       accuracy: accuracy,
     }));
-  },[accuracy])
+  }, [accuracy]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setGameState((prev) => ({
       ...prev,
       score: points,
     }));
-  },[points])
+  }, [points]);
+
+  useEffect(() => {
+    if (
+      gameState.answeredQuestions.length == 0 &&
+      gameState.selectedResolution.length == 0
+    )
+      setPoints(100);
+  }, [gameState.answeredQuestions.length, gameState.selectedResolution.length]);
+
+  useEffect(() => {
+    if (gameState.timeLeft <= 0) setPoints(0);
+  }, [gameState.timeLeft]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
@@ -337,8 +349,8 @@ const GamePage: React.FC = () => {
             currentLevel={scenario.id}
             questionsAnswered={gameState.answeredQuestions.length}
             totalQuestions={scenario.questions.length}
-            accuracy={accuracy}
-            playerPoints={points}
+            accuracy={gameState.accuracy}
+            playerPoints={gameState.score}
             currentHint={
               scenario.questions.find(
                 (q) => !gameState.answeredQuestions.includes(q.text)
@@ -358,10 +370,7 @@ const GamePage: React.FC = () => {
                 />
               </div>
 
-              <GameIllustration
-                levelId={scenario.id}
-                questionIndex={gameState.answeredQuestions.length}
-              />
+              <GameIllustration levelId={scenario.id} />
 
               <DiagnosticPhase
                 questions={scenario.questions}
