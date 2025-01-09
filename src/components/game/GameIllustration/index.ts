@@ -1,1 +1,1 @@
-export { default } from './GameIllustration';
+export { default } from '../GameIllustration';
