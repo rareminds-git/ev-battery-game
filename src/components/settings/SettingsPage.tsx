@@ -1,12 +1,10 @@
+import { Home } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home } from 'lucide-react';
-import { useSettings } from '../../hooks/useSettings';
-import SoundSettings from './sections/SoundSettings';
-import DisplaySettings from './sections/DisplaySettings';
-import GameplaySettings from './sections/GameplaySettings';
-import CircuitLines from '../ui/animations/CircuitLines';
 import AnimatedTitle from '../ui/AnimatedTitle';
+import CircuitLines from '../ui/animations/CircuitLines';
+import GameplaySettings from './sections/GameplaySettings';
+import SoundSettings from './sections/SoundSettings';
 
 const SettingsPage: React.FC = () => {
   const navigate = useNavigate();
@@ -35,7 +33,7 @@ const SettingsPage: React.FC = () => {
           
           <div className="space-y-8">
             <SoundSettings />
-            <DisplaySettings />
+            {/* <DisplaySettings /> */}
             <GameplaySettings />
           </div>
         </div>

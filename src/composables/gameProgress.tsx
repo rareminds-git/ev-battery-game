@@ -1,4 +1,14 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Adjust import based on your file structure
 
 const saveGameProgress = async (
@@ -105,5 +115,77 @@ const deleteLevelRecords = async (userId: string) => {
   }
 };
 
-export { checkGameProgress, deleteLevelRecords, fetchGameProgress, saveGameProgress };
+const uploadToLeaderboard = async (
+  userId: string,
+  username: string,
+  totalScore: Number,
+  accuracy: Number,
+  completedLevels: Number
+) => {
+  try {
+    // Create or overwrite the document at `leaderboard/userId`
+    await setDoc(doc(db, "leaderboard", userId), {
+      username: username,
+      totalScore: totalScore,
+      accuracy: accuracy,
+      completedLevels: completedLevels,
+      updatedAt: serverTimestamp(),
+    });
+    console.log(`Leaderboard entry added/updated for user: ${userId}`);
+  } catch (error) {
+    console.error("Error adding/updating leaderboard entry:", error);
+  }
+};
+
+const fetchUserDetails = async (userId: string) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      return userDoc.data(); // Returns the user document data
+    } else {
+      console.log("No such user!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    return null;
+  }
+};
+
+const fetchUserStats = async (userId: string) => {
+  try {
+    const userProgressRef = collection(db, "playerProgress", userId, "levels");
+    const userDocs = await getDocs(userProgressRef);
+
+    let totalScore = 0;
+    let totalAccuracy = 0;
+    let completedLevels = 0;
+
+    userDocs.forEach((doc) => {
+      const data = doc.data();
+      if (data.completed) {
+        totalScore += data.score || 0;
+        totalAccuracy += data.accuracy || 0;
+        completedLevels++;
+      }
+    });
+    console.log(totalScore, totalAccuracy, completedLevels);
+    return { totalScore, totalAccuracy, completedLevels };
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    return null;
+  }
+};
+
+export {
+  checkGameProgress,
+  deleteLevelRecords,
+  fetchGameProgress,
+  fetchUserDetails,
+  fetchUserStats,
+  saveGameProgress,
+  uploadToLeaderboard
+};
 

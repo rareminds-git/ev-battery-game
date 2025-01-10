@@ -4,7 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   fetchGameProgress,
+  fetchUserDetails,
+  fetchUserStats,
   saveGameProgress,
+  uploadToLeaderboard,
 } from "../../composables/gameProgress";
 import { useGameProgress } from "../../context/GameProgressContext";
 import {
@@ -96,7 +99,7 @@ const GamePage: React.FC = () => {
     setShowConfirmation(true);
   }, []);
 
-  const handleConfirmResolution = useCallback(() => {
+  const handleConfirmResolution = useCallback(async () => {
     if (!pendingOption || !scenario) return;
 
     const option = scenario.resolutionQuestion.options.find(
@@ -118,13 +121,33 @@ const GamePage: React.FC = () => {
         ...prev,
         completed: true,
       }));
+
+      try {
+        if (auth && auth.currentUser != null) {
+          const user = await fetchUserDetails(auth.currentUser?.uid || "");
+          const data = await fetchUserStats(auth.currentUser?.uid);
+          if (data) {
+            console.log(data?.totalAccuracy, data?.completedLevels);
+            uploadToLeaderboard(
+              auth.currentUser?.uid || "",
+              user?.username,
+              data?.totalScore,
+              data?.totalAccuracy / data?.completedLevels,
+              data?.completedLevels
+            );
+          }
+        }
+      } catch (error) {
+        console.error(" Error uploading to leaderboard:", error);
+      }
+
       completeLevel(scenario.id);
       setShowSuccess(true);
     } else {
       setShowError(true);
       setTimeout(() => setShowError(false), 2000);
     }
-  }, [pendingOption, scenario, completeLevel]);
+  }, [pendingOption, scenario, completeLevel, auth]);
 
   const handleNextLevel = useCallback(() => {
     setShowSuccess(false);
