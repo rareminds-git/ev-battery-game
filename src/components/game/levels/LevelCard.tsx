@@ -153,7 +153,7 @@ const LevelCard: React.FC<LevelCardProps> = ({ level }) => {
                 }`}
             >
               {isCompleted
-                ? "Replay Level"
+                ? "View Level"
                 : isUnlocked
                 ? "Start Diagnosis"
                 : "Locked"}
