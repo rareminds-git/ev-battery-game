@@ -1,4 +1,4 @@
-import { BookOpen, FastForward, LogOut, Play, Settings, Trophy } from "lucide-react";
+import { BookOpen, FastForward, Play, Settings, Trophy } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,7 +15,6 @@ import GlowingTitle from "../ui/GlowingTitle";
 import MenuItem from "./MenuItem";
 
 const HomePage: React.FC = () => {
-  const { logout } = useAuth();
   const navigate = useNavigate();
   const [hasProgress, setHasProgress] = useState(false);
   const [menuItems, setMenuItems] = useState<any>([]);
@@ -78,7 +77,6 @@ const HomePage: React.FC = () => {
         title: "Settings",
         onClick: () => navigate("/settings"),
       },
-      { icon: LogOut, title: "Logout", onClick: logout },
     ]);
   }, [hasProgress, userId]);
 
