@@ -1,9 +1,8 @@
+import { Gamepad2, Lightbulb } from 'lucide-react';
 import React from 'react';
-import { Gamepad2, Lightbulb, AlertTriangle } from 'lucide-react';
 import { useSettings } from '../../../hooks/useSettings';
 import SettingsSection from '../ui/SettingsSection';
 import Toggle from '../ui/Toggle';
-import Select from '../ui/Select';
 
 const GameplaySettings: React.FC = () => {
   const { settings, updateGameplaySettings } = useSettings();
@@ -12,7 +11,7 @@ const GameplaySettings: React.FC = () => {
   return (
     <SettingsSection title="Gameplay" icon={Gamepad2}>
       <div className="space-y-6">
-        <Select
+        {/* <Select
           label="Difficulty"
           value={gameplay.difficulty}
           onChange={(value) => updateGameplaySettings({ 
@@ -23,7 +22,7 @@ const GameplaySettings: React.FC = () => {
             { value: 'normal', label: 'Normal' },
             { value: 'hard', label: 'Hard' }
           ]}
-        />
+        /> */}
         
         <Toggle
           label="Show Hints"
@@ -32,12 +31,12 @@ const GameplaySettings: React.FC = () => {
           onChange={(checked) => updateGameplaySettings({ hints: checked })}
         />
         
-        <Toggle
+        {/* <Toggle
           label="Confirm Actions"
           icon={AlertTriangle}
           checked={gameplay.confirmActions}
           onChange={(checked) => updateGameplaySettings({ confirmActions: checked })}
-        />
+        /> */}
       </div>
     </SettingsSection>
   );

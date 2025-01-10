@@ -36,6 +36,13 @@ export interface DiagnosticScenario {
   };
 }
 
+export interface PlayerScore {
+  username: string;
+  totalScore: number;
+  accuracy: number;
+  completedLevels: number;
+}
+
 // export interface LevelsData {
 //   id: number;
 //   revealedQuestionsIds: string[];

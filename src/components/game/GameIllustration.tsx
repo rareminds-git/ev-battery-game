@@ -1,5 +1,5 @@
 import React from "react";
-import ElectricCar from "../../assets/electric-car.gif";
+import { LevelImgs } from "../../data/levelIcons";
 import CircuitLines from "../ui/animations/CircuitLines";
 
 interface GameIllustrationProps {
@@ -8,23 +8,7 @@ interface GameIllustrationProps {
 
 const GameIllustration: React.FC<GameIllustrationProps> = ({ levelId }) => {
   const getIllustration = () => {
-    const imgs = [
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-      ElectricCar,
-    ];
+    const imgs = LevelImgs;
     const img = imgs[levelId - 1];
 
     return (
