@@ -111,6 +111,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Update user profile with username
       await updateProfile(user, { displayName: username });
+      setAuthState({
+        user: {
+          username: username,
+          id: auth?.currentUser?.uid || "",
+          email: email,
+        },
+        isAuthenticated: true,
+      });
 
       // Store additional user information in Firestore
       await setDoc(doc(db, "users", user.uid), {
@@ -135,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await signOut(auth);
       setAuthState({ user: null, isAuthenticated: false });
       toast.success("Logged Out!");
-    } catch (error:any) {
+    } catch (error: any) {
       toast.success("Error during logout:", error.message);
       // console.error("Error during logout:", error);
       // throw error;
