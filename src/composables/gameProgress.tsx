@@ -179,9 +179,30 @@ const fetchUserStats = async (userId: string) => {
   }
 };
 
+const deleteLeaderboardRecord = async (userId: string) => {
+  try {
+    // Reference to the specific user's leaderboard document
+    const leaderboardRef = doc(db, "leaderboard", userId);
+
+    // Fetch the user's leaderboard document
+    const leaderboardDoc = await getDoc(leaderboardRef);
+
+    // If the document exists, delete it
+    if (leaderboardDoc.exists()) {
+      await deleteDoc(leaderboardRef);
+      console.log(
+        `Leaderboard record for user ${userId} deleted successfully.`
+      );
+    } else {
+      console.log(`No leaderboard record found for user ${userId}.`);
+    }
+  } catch (error) {
+    console.error("Error deleting leaderboard record:", error);
+  }
+};
+
 export {
-  checkGameProgress,
-  deleteLevelRecords,
+  checkGameProgress, deleteLeaderboardRecord, deleteLevelRecords,
   fetchGameProgress,
   fetchUserDetails,
   fetchUserStats,

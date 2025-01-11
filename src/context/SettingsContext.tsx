@@ -18,6 +18,9 @@ const DEFAULT_SETTINGS: GameSettings = {
     hints: true,
     confirmActions: true,
   },
+  language: {
+    current: 'en',
+  },
 };
 
 interface SettingsContextType {
@@ -26,6 +29,7 @@ interface SettingsContextType {
   updateSoundSettings: (soundSettings: Partial<GameSettings['sound']>) => void;
   updateDisplaySettings: (displaySettings: Partial<GameSettings['display']>) => void;
   updateGameplaySettings: (gameplaySettings: Partial<GameSettings['gameplay']>) => void;
+  updateLanguageSettings: (languageSettings: Partial<GameSettings['language']>) => void;
 }
 
 export const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -74,6 +78,14 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     saveSettings(updated);
   };
 
+  const updateLanguageSettings = (languageSettings: Partial<GameSettings['language']>) => {
+    const updated = {
+      ...settings,
+      language: { ...settings.language, ...languageSettings },
+    };
+    saveSettings(updated);
+  };
+
   return (
     <SettingsContext.Provider value={{
       settings,
@@ -81,6 +93,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       updateSoundSettings,
       updateDisplaySettings,
       updateGameplaySettings,
+      updateLanguageSettings,
     }}>
       {children}
     </SettingsContext.Provider>

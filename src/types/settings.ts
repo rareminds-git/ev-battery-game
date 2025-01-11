@@ -15,4 +15,7 @@ export interface GameSettings {
     hints: boolean;
     confirmActions: boolean;
   };
+  language: {
+    current: 'en' | 'ta';
+  };
 }
