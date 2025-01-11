@@ -5,7 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 import AnimatedTitle from '../ui/AnimatedTitle';
 import CircuitLines from '../ui/animations/CircuitLines';
 import GameplaySettings from './sections/GameplaySettings';
-import LanguageSettings from './sections/LanguageSettings';
 import SoundSettings from './sections/SoundSettings';
 
 const SettingsPage: React.FC = () => {
@@ -45,7 +44,7 @@ const SettingsPage: React.FC = () => {
           
           <div className="space-y-8">
             <SoundSettings />
-            <LanguageSettings />
+            {/* <LanguageSettings /> */}
             <GameplaySettings />
             
             {/* Logout Button */}

@@ -59,6 +59,27 @@ const GamePage: React.FC = () => {
     accuracy: 0,
   });
 
+  const uploadLB = async () => {
+    try {
+      if (auth && auth.currentUser != null) {
+        const user = await fetchUserDetails(auth.currentUser?.uid || "");
+        const data = await fetchUserStats(auth.currentUser?.uid);
+        if (data) {
+          console.log(data?.totalAccuracy, data?.completedLevels);
+          uploadToLeaderboard(
+            auth.currentUser?.uid || "",
+            user?.username,
+            data?.totalScore,
+            data?.totalAccuracy / data?.completedLevels,
+            data?.completedLevels
+          );
+        }
+      }
+    } catch (error) {
+      console.error(" Error uploading to leaderboard:", error);
+    }
+  };
+
   useEffect(() => {
     console.log(levelId);
     if (levelId) {
@@ -122,24 +143,25 @@ const GamePage: React.FC = () => {
         completed: true,
       }));
 
-      try {
-        if (auth && auth.currentUser != null) {
-          const user = await fetchUserDetails(auth.currentUser?.uid || "");
-          const data = await fetchUserStats(auth.currentUser?.uid);
-          if (data) {
-            console.log(data?.totalAccuracy, data?.completedLevels);
-            uploadToLeaderboard(
-              auth.currentUser?.uid || "",
-              user?.username,
-              data?.totalScore,
-              data?.totalAccuracy / data?.completedLevels,
-              data?.completedLevels
-            );
-          }
-        }
-      } catch (error) {
-        console.error(" Error uploading to leaderboard:", error);
-      }
+      // try {
+      //   if (auth && auth.currentUser != null) {
+      //     const user = await fetchUserDetails(auth.currentUser?.uid || "");
+      //     const data = await fetchUserStats(auth.currentUser?.uid);
+      //     if (data) {
+      //       console.log(data?.totalAccuracy, data?.completedLevels);
+      //       uploadToLeaderboard(
+      //         auth.currentUser?.uid || "",
+      //         user?.username,
+      //         data?.totalScore,
+      //         data?.totalAccuracy / data?.completedLevels,
+      //         data?.completedLevels
+      //       );
+      //     }
+      //   }
+      // } catch (error) {
+      //   console.error(" Error uploading to leaderboard:", error);
+      // }
+      uploadLB();
 
       completeLevel(scenario.id);
       setShowSuccess(true);
@@ -306,7 +328,10 @@ const GamePage: React.FC = () => {
   useEffect(() => {
     if (gameState.timeLeft <= 0) {
       if (!gameState.completed) {
-        if (scenario) completeLevel(scenario.id);
+        if (scenario) {
+          uploadLB();
+          completeLevel(scenario.id);
+        }
         setTimeOut(true);
       }
       setGameState((prev) => ({

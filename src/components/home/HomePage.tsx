@@ -3,9 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   checkGameProgress,
+  deleteLeaderboardRecord,
   deleteLevelRecords,
 } from "../../composables/gameProgress";
-import { useAuth } from "../../context/AuthContext";
 import { useGameProgress } from "../../context/GameProgressContext";
 import { auth } from "../../firebaseConfig";
 import { ConfirmationModal } from "../game/feedback";
@@ -81,10 +81,16 @@ const HomePage: React.FC = () => {
   }, [hasProgress, userId]);
 
   const handleConfirmResolution = () => {
-    deleteLevelRecords(userId || "")
+    deleteLeaderboardRecord(userId || "")
       .then(() => {
-        resetCompleteLevel();
-        navigate("/levels");
+        deleteLevelRecords(userId || "")
+          .then(() => {
+            resetCompleteLevel();
+            navigate("/levels");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);
