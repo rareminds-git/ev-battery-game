@@ -17,7 +17,7 @@ const LoaderScreen: React.FC<LoaderScreenProps> = ({ onComplete }) => {
       } else {
         onComplete();
       }
-    }, 3000);
+    }, 30);
 
     return () => clearTimeout(timer);
   }, [progress, onComplete]);
