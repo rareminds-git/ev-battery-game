@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRecoilState } from "recoil";
 import { Auth } from "./components/auth";
+import NotFoundPage from "./components/error/NotFoundPage";
 import GamePage from "./components/game/GamePage";
 import LevelsPage from "./components/game/levels/LevelsPage";
 import HomePage from "./components/home/HomePage";
@@ -68,6 +69,7 @@ const AppContent: React.FC = () => {
             <Route path="/instructions" element={<InstructionsPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/scores" element={<ScoresPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         ) : (
           <Auth />
