@@ -1,14 +1,14 @@
+import { Award, Battery, Brain, Home, Shield, Target, Zap } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Home, Zap, Target, Brain, Battery, Shield, Award } from 'lucide-react';
-import CircuitLines from '../ui/animations/CircuitLines';
 import AnimatedTitle from '../ui/AnimatedTitle';
+import CircuitLines from '../ui/animations/CircuitLines';
 
 const InstructionsPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">
+    <div className="flex-1 bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">
       <CircuitLines />
       
       <div className="max-w-4xl mx-auto relative z-10">

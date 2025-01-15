@@ -28,7 +28,7 @@ const Auth: React.FC = () => {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 
+      className="flex-1 bg-gradient-to-b from-slate-950 to-slate-900 
       flex items-center justify-center p-4 relative overflow-hidden"
     >
       <CircuitLines />

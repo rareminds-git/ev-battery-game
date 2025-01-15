@@ -390,7 +390,7 @@ const GamePage: React.FC = () => {
   }, [gameState.timeLeft]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900">
+    <div className="flex-1 bg-gradient-to-b from-slate-950 to-slate-900">
       {scenario != null && (
         <>
           <GameNavbar

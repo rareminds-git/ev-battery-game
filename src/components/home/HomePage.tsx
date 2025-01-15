@@ -98,7 +98,7 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden flex items-center">
+    <div className="flex-1 p-8 relative overflow-hidden flex items-center">
       <CircuitLines />
       <div className="max-w-md mx-auto relative z-10">
         <div className="flex items-center gap-6 mb-12">
