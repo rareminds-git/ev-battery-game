@@ -41,37 +41,43 @@ const AppContent: React.FC = () => {
   }
 
   return (
-    <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
-      {isAuthenticated && (
-        <div className="fixed top-4 right-4 z-50">
-          <ProfileMenu />
-        </div>
-      )}
-      {isAuthenticated ? (
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/levels" element={<LevelsPage />} />
-          <Route path="/game/:levelId" element={<GamePage />} />
-          <Route path="/instructions" element={<InstructionsPage />} />
-          <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/scores" element={<ScoresPage />} />
-        </Routes>
-      ) : (
-        <Auth />
-      )}
-    </>
+    <div className="relative bg-gradient-to-b from-slate-950 to-slate-900">
+      <div className="min-h-screen flex pb-10">
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+        />
+        {isAuthenticated && (
+          <div className="fixed top-4 right-4 z-50">
+            <ProfileMenu />
+          </div>
+        )}
+        {isAuthenticated ? (
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/levels" element={<LevelsPage />} />
+            <Route path="/game/:levelId" element={<GamePage />} />
+            <Route path="/instructions" element={<InstructionsPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
+            <Route path="/scores" element={<ScoresPage />} />
+          </Routes>
+        ) : (
+          <Auth />
+        )}
+      </div>
+
+      <div className="absolute bottom-2 text-white flex justify-center w-full">
+        Copyright © 2025 Rareminds.
+      </div>
+    </div>
   );
 };
 

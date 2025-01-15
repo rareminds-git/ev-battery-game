@@ -96,7 +96,7 @@ const ScoresPage: React.FC = () => {
   }, [userId]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">
+    <div className="flex-1 bg-gradient-to-b from-slate-950 to-slate-900 p-8 relative overflow-hidden">
       <CircuitLines />
 
       <div className="max-w-4xl mx-auto relative z-10">
