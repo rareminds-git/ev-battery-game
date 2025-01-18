@@ -1,3 +1,4 @@
+import { doc, getDoc } from "firebase/firestore";
 import { AnimatePresence } from "framer-motion";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -50,6 +51,7 @@ const GamePage: React.FC = () => {
   const [points, setPoints] = useState(100);
   const totalPoints = 100;
   const totalTime = 180;
+  const [isLoading, setIsLoading] = useState(true);
 
   const [gameState, setGameState] = useState({
     answeredQuestions: [] as string[],
@@ -108,6 +110,28 @@ const GamePage: React.FC = () => {
       console.error(" Error uploading to leaderboard:", error);
     }
   };
+
+  useEffect(() => {
+    const validateLevel = async () => {
+      if (!levelId) {
+        navigate("/404");
+        return;
+      }
+      try {
+        const levelRef = doc(db, "scenarios", levelId);
+        const levelDoc = await getDoc(levelRef);
+        if (!levelDoc.exists()) {
+          navigate("/404");
+          return;
+        }
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error validating level:", error);
+        navigate("/404");
+      }
+    };
+    validateLevel();
+  }, [levelId, navigate]);
 
   useEffect(() => {
     console.log(levelId);
