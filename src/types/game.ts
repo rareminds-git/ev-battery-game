@@ -21,6 +21,7 @@ export interface Level {
   id: number;
   title: string;
   symptoms: string;
+  img: string;
 }
 
 export interface DiagnosticScenario {
