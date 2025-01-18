@@ -25,7 +25,6 @@ import GameNavbar from "./GameNavbar";
 import { DiagnosticPhase } from "./diagnostic";
 import { ConfirmationModal, ErrorAnimation, SuccessModal } from "./feedback";
 import TimeOutModal from "./feedback/TimeOutModal";
-import { doc, getDoc } from "firebase/firestore";
 
 const GamePage: React.FC = () => {
   const navigate = useNavigate();
@@ -40,7 +39,6 @@ const GamePage: React.FC = () => {
   const [relevantQuestions, setRelevantQuestions] = useState<any>();
   const [irrelevantQuestions, setIrrelevantQuestions] = useState<any>();
   const [accuracy, setAccuracy] = useState(100);
-  const [isLoading, setIsLoading] = useState(true);
 
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [pendingOption, setPendingOption] = useState<string | null>(null);
@@ -62,33 +60,6 @@ const GamePage: React.FC = () => {
     score: 0,
     accuracy: 0,
   });
-
-  // Level validation middleware
-  useEffect(() => {
-    const validateLevel = async () => {
-      if (!levelId) {
-        navigate("/404");
-        return;
-      }
-
-      try {
-        const levelRef = doc(db, "scenarios", levelId);
-        const levelDoc = await getDoc(levelRef);
-
-        if (!levelDoc.exists()) {
-          navigate("/404");
-          return;
-        }
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error validating level:", error);
-        navigate("/404");
-      }
-    };
-
-    validateLevel();
-  }, [levelId, navigate]);
 
   const uploadLB = async () => {
     try {
@@ -187,6 +158,7 @@ const GamePage: React.FC = () => {
         ...(gameState.selectedResolution || []),
         pendingOption,
       ],
+      // completed: false,
     }));
 
     if (option?.isCorrect) {
@@ -196,6 +168,7 @@ const GamePage: React.FC = () => {
       }));
 
       uploadLB();
+
       completeLevel(scenario.id);
       setShowSuccess(true);
     } else {
@@ -229,10 +202,105 @@ const GamePage: React.FC = () => {
   const user = auth.currentUser;
 
   useEffect(() => {
+    if (
+      !(
+        gameState.selectedResolution.length > 0 ||
+        gameState.answeredQuestions.length > 0
+      )
+    ) {
+      console.log("No resolutions or answers provided.");
+      return;
+    }
+
+    let resolutionPointDeduction = 0;
+    let answeredQuestionsPointDeduction = 0;
+    let irrelevantQuestionsPointDeduction = 0;
+
+    const resolutionOptions = scenario?.resolutionQuestion?.options || [];
+    const totalResolutionOptions = resolutionOptions.length;
+    const totalQuestions = scenario?.questions?.length || 0;
+
+    // Calculate points deducted for wrong answers in resolution
+    const selectedWrongAnswers = gameState.selectedResolution.filter((q) =>
+      resolutionOptions.some((option) => option.id === q && !option.isCorrect)
+    ).length;
+
+    if (totalResolutionOptions > 0) {
+      resolutionPointDeduction =
+        (selectedWrongAnswers * totalPoints) / totalResolutionOptions;
+      console.log("Resolution Point Deduction:", resolutionPointDeduction);
+    } else {
+      console.warn("Resolution options length is undefined or zero.");
+    }
+
+    // Calculate points deducted for answered questions
+    if (totalResolutionOptions > 0 && totalQuestions > 0) {
+      answeredQuestionsPointDeduction =
+        (totalPoints / totalResolutionOptions / totalQuestions) *
+        gameState.answeredQuestions.length;
+      console.log(
+        "Answered Questions Point Deduction:",
+        answeredQuestionsPointDeduction
+      );
+    } else {
+      console.warn("Resolution options or questions are undefined or zero.");
+    }
+
+    // Update points
+    setPoints(
+      totalPoints - resolutionPointDeduction - answeredQuestionsPointDeduction
+    );
+
+    // Calculate points deducted for irrelevant questions answered
+    const irrelevantQuestionsAnswered = gameState.answeredQuestions.filter(
+      (q) =>
+        scenario?.questions?.some(
+          (question) => question.text === q && !question.isRelevant
+        )
+    ).length;
+
+    if (irrelevantQuestions?.length > 0) {
+      const totalIrrelevantQuestions = irrelevantQuestions?.length; // Avoid division by zero
+      if (totalResolutionOptions > 0) {
+        irrelevantQuestionsPointDeduction =
+          (totalPoints / totalResolutionOptions / totalIrrelevantQuestions) *
+          irrelevantQuestionsAnswered;
+        console.log(
+          totalPoints,
+          totalResolutionOptions,
+          totalIrrelevantQuestions,
+          irrelevantQuestionsAnswered
+        );
+        console.log(
+          "Irrelevant Questions Point Deduction:",
+          irrelevantQuestionsPointDeduction
+        );
+      } else {
+        console.warn(
+          "Resolution options or irrelevant questions are undefined."
+        );
+      }
+
+      console.log(irrelevantQuestionsPointDeduction);
+
+      setAccuracy(
+        100 - irrelevantQuestionsPointDeduction - resolutionPointDeduction
+      );
+    }
+  }, [
+    gameState.selectedResolution,
+    scenario?.resolutionQuestion?.options,
+    gameState.answeredQuestions,
+    scenario?.questions,
+    irrelevantQuestions?.length,
+  ]);
+
+  useEffect(() => {
     if (user != null && levelId) {
       fetchGameProgress(user.uid, levelId)
         .then((progress) => {
           if (progress) {
+            // Handle the fetched progress
             console.log("Player's progress:", progress);
             setGameState({
               answeredQuestions: progress.answeredQuestions,
@@ -244,6 +312,7 @@ const GamePage: React.FC = () => {
               accuracy: progress.accuracy,
             });
           } else {
+            // Handle case where no progress exists
             console.log("No progress found.");
             saveGameProgress(user.uid, gameState, levelId);
           }
@@ -288,7 +357,7 @@ const GamePage: React.FC = () => {
       }));
     }, 1000);
 
-    return () => clearInterval(timerId);
+    return () => clearInterval(timerId); // Cleanup interval on component unmount
   }, [gameState.timeLeft]);
 
   useEffect(() => {
@@ -329,7 +398,7 @@ const GamePage: React.FC = () => {
   if (isLoading) {
     return <div>Loading...</div>;
   }
-
+  
   return (
     <div className="flex-1 bg-gradient-to-b from-slate-950 to-slate-900">
       {scenario != null && (
