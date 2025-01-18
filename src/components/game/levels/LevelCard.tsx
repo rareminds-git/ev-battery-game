@@ -4,7 +4,7 @@ import {
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGameProgress } from "../../../context/GameProgressContext";
-import { LevelImgs } from "../../../data/levelIcons";
+// import { LevelImgs } from "../../../data/levelIcons";
 import { Level } from "../../../types/game";
 import { getDifficultyBadge } from "../../../utils/difficultyBadge";
 
@@ -21,12 +21,12 @@ const LevelCard: React.FC<LevelCardProps> = ({ level }) => {
     level.id === 1 || progress.completedLevels.includes(level.id - 1);
   const isCompleted = progress.completedLevels.includes(level.id);
 
-  const getBatteryIcon = (id: number) => {
-    const icons = LevelImgs;
-    return icons[id - 1];
-  };
+  // const getBatteryIcon = (id: number) => {
+  //   const icons = LevelImgs;
+  //   return icons[id - 1];
+  // };
 
-  const Icon = getBatteryIcon(level.id);
+  // const Icon = getBatteryIcon(level.id);
   const difficulty = getDifficultyBadge(level.id);
 
   const handleStartLevel = (e: React.MouseEvent) => {
@@ -68,7 +68,7 @@ const LevelCard: React.FC<LevelCardProps> = ({ level }) => {
                       ? 'text-emerald-400 group-hover:text-emerald-300' 
                       : 'text-blue-400 group-hover:text-blue-300'
                     }`} /> */}
-                  <img src={Icon} className="h-[120px]"/>
+                  <img src={level.img} className="h-[120px]"/>
                   <div
                     className="absolute inset-0 bg-blue-400/20 blur-xl rounded-full
                     group-hover:bg-emerald-400/20 transition-colors duration-300"
