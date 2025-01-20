@@ -428,7 +428,7 @@ const GamePage: React.FC = () => {
                 />
               </div>
 
-              <GameIllustration levelId={scenario.id} />
+              <GameIllustration img={scenario.img} />
 
               <DiagnosticPhase
                 questions={scenario.questions}

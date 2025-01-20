@@ -1,15 +1,12 @@
 import React from "react";
-import { LevelImgs } from "../../data/levelIcons";
 import CircuitLines from "../ui/animations/CircuitLines";
 
 interface GameIllustrationProps {
-  levelId: number;
+  img: string;
 }
 
-const GameIllustration: React.FC<GameIllustrationProps> = ({ levelId }) => {
+const GameIllustration: React.FC<GameIllustrationProps> = ({ img }) => {
   const getIllustration = () => {
-    const imgs = LevelImgs;
-    const img = imgs[levelId - 1];
 
     return (
       <div className="relative transform hover:scale-105 transition-all duration-500">

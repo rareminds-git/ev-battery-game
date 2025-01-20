@@ -31,6 +31,8 @@ export interface DiagnosticScenario {
   clues: string[];
   description: string;
   questions: DiagnosticQuestion[];
+  difficulty: string;
+  img: string;
   resolutionQuestion: {
     text: string;
     options: ResolutionOption[];

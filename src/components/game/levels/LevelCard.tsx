@@ -1,6 +1,4 @@
-import {
-  Lock
-} from "lucide-react";
+import { Lock } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGameProgress } from "../../../context/GameProgressContext";
@@ -62,7 +60,7 @@ const LevelCard: React.FC<LevelCardProps> = ({ level }) => {
                       ? 'text-emerald-400 group-hover:text-emerald-300' 
                       : 'text-blue-400 group-hover:text-blue-300'
                     }`} /> */}
-                  <img src={level.img} className="h-[120px]"/>
+                  <img src={level.img} className="h-[120px]" />
                   <div
                     className="absolute inset-0 bg-blue-400/20 blur-xl rounded-full
                     group-hover:bg-emerald-400/20 transition-colors duration-300"
