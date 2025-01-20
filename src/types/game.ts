@@ -1,5 +1,4 @@
 export interface DifficultyBadge {
-  text: string;
   colors: string;
 }
 
@@ -18,6 +17,7 @@ export interface ResolutionOption {
 }
 
 export interface Level {
+  difficulty: string;
   id: number;
   title: string;
   symptoms: string;

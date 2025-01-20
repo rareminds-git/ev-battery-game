@@ -21,13 +21,7 @@ const LevelCard: React.FC<LevelCardProps> = ({ level }) => {
     level.id === 1 || progress.completedLevels.includes(level.id - 1);
   const isCompleted = progress.completedLevels.includes(level.id);
 
-  // const getBatteryIcon = (id: number) => {
-  //   const icons = LevelImgs;
-  //   return icons[id - 1];
-  // };
-
-  // const Icon = getBatteryIcon(level.id);
-  const difficulty = getDifficultyBadge(level.id);
+  const difficulty = getDifficultyBadge(level.difficulty);
 
   const handleStartLevel = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -102,7 +96,7 @@ const LevelCard: React.FC<LevelCardProps> = ({ level }) => {
                 className={`inline-flex px-3 py-1 rounded-full 
                 border ${difficulty.colors}`}
               >
-                <span className="text-sm font-medium">{difficulty.text}</span>
+                <span className="text-sm font-medium">{level.difficulty}</span>
               </div>
             </div>
 
