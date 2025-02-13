@@ -136,7 +136,7 @@ const ScoresPage: React.FC = () => {
               <StatCard
                 icon={Trophy}
                 title="Total Score"
-                value={userStats.totalScore}
+                value={userStats.totalScore.toFixed(2)}
                 color="text-yellow-400"
               />
               <StatCard
