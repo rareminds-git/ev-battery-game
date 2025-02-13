@@ -5,7 +5,7 @@ import {
   getDocs,
   orderBy,
   query,
-  where
+  where,
 } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Ensure you have initialized Firebase and Firestore
 
@@ -18,10 +18,13 @@ const fetchAllLevels = async () => {
     const snapshot = await getDocs(sortedQuery);
 
     levels = snapshot.docs.map((doc) => ({
-      id: doc.id, // Always include the document ID
       ...doc.data(), // Fetch only the selected fields
+      id: Number(doc.id) as number, // Always include the document ID
     }));
-    // console.log("Levels fetched successfully:", levels);
+
+    levels = levels.sort((a, b) => a.id - b.id);
+
+    console.log("Levels fetched successfully:", levels);
     return levels;
   } catch (error) {
     console.error("Error fetching levels:", error);
@@ -57,7 +60,9 @@ const fetchTopLevel = async (userId: string) => {
 
     // Extracting the IDs of each document (subdocument)
     const maxLevelId = Math.max(
-      ...querySnapshot.docs.map((doc) => Number(doc.id)).filter((id) => !isNaN(id))
+      ...querySnapshot.docs
+        .map((doc) => Number(doc.id))
+        .filter((id) => !isNaN(id))
     );
 
     return maxLevelId;
